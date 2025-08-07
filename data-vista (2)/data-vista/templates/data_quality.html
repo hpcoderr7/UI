@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data Quality</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1f2a40] min-h-screen font-sans text-white">
+
+  <!-- Header -->
+  <header class="bg-[#2d3e5e] shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white">🧪 Data Quality Report</h1>
+      <a href="/" class="text-cyan-300 hover:underline">← Upload New File</a>
+    </div>
+  </header>
+  
+
+<!-- Dataset Name -->
+<main class="max-w-4xl mx-auto mt-6 px-4">
+  <h2 class="text-xl font-semibold text-cyan-200 mb-4">
+    📁 Dataset Name: {{ filename }}
+  </h2>
+
+  <!-- Navigation Buttons (Styled Like Latest Image) -->
+  <div class="flex justify-center gap-2 mb-6">
+    <!-- Inactive Tab: Overview -->
+    <a href="{{ url_for('dataset_preview') }}"
+       class="flex items-center gap-2 px-4 py-2 rounded-full text-gray-300 
+              bg-[#2a2f4a] font-medium hover:bg-[#3a3f5a] transition">
+      <!-- Overview Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+      </svg>
+      Overview
+    </a>
+
+    <!-- Active Tab: Data Quality -->
+    <a href="{{ url_for('data_quality') }}"
+       class="flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-400 
+              text-cyan-300 bg-[#183b56] font-medium shadow-md hover:bg-[#1e4666] transition">
+      <!-- Data Quality Icon -->
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4 -4M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+      </svg>
+      Data Quality
+    </a>
+  </div>
+
+
+
+  <!-- Content Section -->
+  <main class="max-w-4xl mx-auto px-4">
+
+    {% if quality_report %}
+      <div class="bg-[#2d3e5e] p-6 rounded-lg shadow-lg">
+        <h2 class="text-xl font-bold text-cyan-300 mb-4">🧾 Column-wise Summary</h2>
+        <table class="table-auto w-full border-collapse text-sm">
+          <thead class="bg-[#3c4f6b] text-gray-200">
+            <tr>
+              <th class="px-4 py-2 border border-gray-600">Column</th>
+              <th class="px-4 py-2 border border-gray-600">Missing Values</th>
+              <th class="px-4 py-2 border border-gray-600">Unique</th>
+              <th class="px-4 py-2 border border-gray-600">Mean</th>
+              <th class="px-4 py-2 border border-gray-600">Mode</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for col, stats in quality_report.items() %}
+              <tr class="hover:bg-[#36475f]">
+                <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ col }}</td>
+                <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ stats.missing }}</td>
+                <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ stats.unique }}</td>
+                <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ stats.mean }}</td>
+                <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ stats.mode }}</td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    {% else %}
+      <p class="text-gray-300 text-center mt-10">No data found or unable to generate report.</p>
+    {% endif %}
+  </main>
+</body>
+</html>

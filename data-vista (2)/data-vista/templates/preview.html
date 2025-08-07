@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dataset Preview</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-[#1f2a40] min-h-screen font-sans text-white">
+
+  <!-- Top Header -->
+  <header class="bg-[#2d3e5e] shadow">
+    <div class="max-w-7xl mx-auto px-4 py-4 flex justify-between items-center">
+      <h1 class="text-2xl font-bold text-white">📊 Dataset Viewer</h1>
+      <a href="/" class="text-cyan-300 hover:underline">← Upload New File</a>
+    </div>
+  </header>
+
+  <!-- Dashboard Section -->
+  <main class="max-w-7xl mx-auto mt-6 px-4">
+
+    <h2 class="text-xl font-semibold text-cyan-200 mb-4">
+      📁 Dataset Name: {{ filename }}
+    </h2>
+
+    <!-- Navigation Buttons -->
+    <div class="flex justify-center gap-2 mb-6">
+      <a href="{{ url_for('dataset_preview') }}"
+         class="flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-400 
+                text-cyan-300 bg-[#183b56] font-medium shadow-md hover:bg-[#1e4666] transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-cyan-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16" />
+        </svg>
+        Overview
+      </a>
+      <a href="{{ url_for('data_quality') }}"
+         class="flex items-center gap-2 px-4 py-2 rounded-full text-gray-300 
+                bg-[#2a2f4a] font-medium hover:bg-[#3a3f5a] transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2l4 -4M12 21a9 9 0 1 1 0 -18a9 9 0 0 1 0 18z" />
+        </svg>
+        Data Quality
+      </a>
+    </div>
+
+    <!-- Container for stats + toggle + table side by side -->
+    <div class="flex gap-6 mb-6">
+
+      <!-- Stats + toggle button column -->
+      <div class="flex flex-col w-1/4">
+        <div id="stats-box" class="grid grid-cols-2 gap-4 bg-[#1f2a40] p-4 rounded-xl shadow-xl mb-4">
+          <div class="bg-[#2d3e5e] p-4 rounded-lg text-center">
+            <div class="text-2xl font-semibold text-cyan-300">{{ total_rows }}</div>
+            <div class="text-sm text-gray-200 mt-1">Total Rows</div>
+          </div>
+          <div class="bg-[#2d3e5e] p-4 rounded-lg text-center">
+            <div class="text-2xl font-semibold text-blue-300">{{ total_columns }}</div>
+            <div class="text-sm text-gray-200 mt-1">Columns</div>
+          </div>
+          <div class="bg-[#2d3e5e] p-4 rounded-lg text-center">
+            <div class="text-2xl font-semibold text-red-400">{{ missing_percent }}%</div>
+            <div class="text-sm text-gray-200 mt-1">Missing Data</div>
+          </div>
+          <div class="bg-[#2d3e5e] p-4 rounded-lg text-center">
+            <div class="text-2xl font-semibold text-yellow-400">{{ duplicate_rows }}</div>
+            <div class="text-sm text-gray-200 mt-1">Duplicates</div>
+          </div>
+        </div>
+
+        <!-- Toggle button below stats -->
+        <div class="text-center">
+          <button onclick="toggleStats()"
+                  class="bg-indigo-600 text-white px-4 py-2 rounded hover:bg-indigo-700 transition w-full">
+            Summarical Stats
+          </button>
+        </div>
+      </div>
+
+      <!-- Dataset table -->
+      <div class="bg-[#2d3e5e] shadow rounded-xl overflow-auto p-4 w-3/4 max-h-[600px]">
+        <table class="table-auto w-full border-collapse text-sm">
+          <thead class="bg-[#3c4f6b] text-gray-200">
+            <tr>
+              {% for col in column_names %}
+                <th class="px-4 py-2 border border-gray-600">{{ col }}</th>
+              {% endfor %}
+            </tr>
+          </thead>
+          <tbody>
+            {% for row in row_data %}
+              <tr class="hover:bg-[#36475f]">
+                {% for col in column_names %}
+                  <td class="px-4 py-2 border border-gray-600 text-gray-100">{{ row[col] }}</td>
+                {% endfor %}
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+
+    <!-- Navigation Form -->
+<form action="{{ url_for('dataset_preview') }}" method="get"
+      class="mt-6 flex flex-wrap gap-4 items-center justify-center">
+  <input type="number" name="start" min="0"
+         value="{{ start }}" placeholder="Start row"
+         class="border border-gray-500 bg-[#1f2a40] text-white p-2 rounded w-32" required>
+  <input type="number" name="end" min="1"
+         value="{{ end }}" placeholder="End row"
+         class="border border-gray-500 bg-[#1f2a40] text-white p-2 rounded w-32" required>
+  <button type="submit"
+          class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+    Load Range
+  </button>
+</form>
+
+  </main>
+
+  <script>
+    function toggleStats() {
+      const stats = document.getElementById("stats-box");
+      stats.style.display = (stats.style.display === "none") ? "grid" : "none";
+    }
+    window.onload = () => {
+      document.getElementById("stats-box").style.display = "grid";
+    };
+  </script>
+
+</body>
+</html>
