@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dataset Preview</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="container py-4">
+  <h2 class="mb-4">📝 Preview of Uploaded Dataset</h2>
+
+  <!-- Range selection -->
+<form method="get" action="/upload" class="mb-4 row g-2">
+  <div class="col-md-3">
+    <label>Start Row</label>
+    <input class="form-control" type="number" name="start" value="{{ start }}" min="0">
+  </div>
+  <div class="col-md-3">
+    <label>End Row</label>
+    <input class="form-control" type="number" name="end" value="{{ end }}" min="1">
+  </div>
+  <div class="col-md-3 d-flex align-items-end">
+    <button class="btn btn-success" type="submit">Load Range</button>
+  </div>
+</form>
+
+
+  <div class="table-responsive">
+    {{ table | safe }}
+  </div>
+
+  <h4 class="mt-4">📊 Column Info:</h4>
+  <ul>
+    {% for col in columns %}
+      <li><strong>{{ col.name }}</strong>: {{ col.dtype }}</li>
+    {% endfor %}
+  </ul>
+  
+<!-- ✅ Preprocess Button -->
+<div class="text-center mt-4">
+    <a href="{{ url_for('preprocess') }}" class="btn btn-success btn-lg">
+        ⚙️ Preprocess Data
+    </a>
+</div>
+  <a href="/" class="btn btn-secondary mt-4">⬅ Back</a>
+</body>
+</html>
